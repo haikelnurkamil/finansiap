@@ -43,7 +43,7 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun RegisterScreen(navHostController: NavHostController){
     var email by remember {
         mutableStateOf("")
     }
@@ -108,17 +108,17 @@ fun LoginScreen(navController: NavHostController) {
                     contentColor = Color.Black,
                 )
             ) {
-                Text(text = "Login")
+                Text(text = "Registrasi")
             }
         }
 
         Spacer(modifier = Modifier.height(80.dp))
         Row {
-            Text(text = "Belum punya akun?", fontSize = 14.sp, modifier = Modifier
+            Text(text = "Sudah memiliki akun?", fontSize = 14.sp, modifier = Modifier
                 .clickable {}
                 .padding(bottom = 30.dp))
             Spacer(modifier = Modifier.padding(2.dp))
-            ClickableText(text = AnnotatedString("Register"), onClick = {}, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold))
+            ClickableText(text = AnnotatedString("Login"), onClick = {}, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold))
         }
 
     }
@@ -132,8 +132,8 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
-fun LoginPreview() {
+fun RegisterPreview() {
     FinansiapTheme {
-        LoginScreen(rememberNavController())
+        RegisterScreen(rememberNavController())
     }
 }
