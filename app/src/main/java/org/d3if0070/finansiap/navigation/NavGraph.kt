@@ -20,11 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import org.d3if0070.finansiap.screen.AccountScreen
-import org.d3if0070.finansiap.screen.DashboardScreen
-import org.d3if0070.finansiap.screen.GroupScreen
-import org.d3if0070.finansiap.screen.LoginScreen
-import org.d3if0070.finansiap.screen.RegisterScreen
+import org.d3if0070.finansiap.screen.account.AccountScreen
+import org.d3if0070.finansiap.screen.dashboard.DashboardScreen
+import org.d3if0070.finansiap.screen.group.GroupScreen
+import org.d3if0070.finansiap.screen.auth.LoginScreen
+import org.d3if0070.finansiap.screen.auth.RegisterScreen
 
 @Composable
 fun NavGraph() {

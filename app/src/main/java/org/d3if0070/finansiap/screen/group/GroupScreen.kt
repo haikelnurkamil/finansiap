@@ -1,4 +1,4 @@
-package org.d3if0070.finansiap.screen
+package org.d3if0070.finansiap.screen.group
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
@@ -19,11 +19,10 @@ import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 
-
 @Composable
-fun DashboardScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun GroupScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     Scaffold(bottomBar = {
-        BottomNavBar(navController = navController, Screen.Dashboard.route)
+        BottomNavBar(navController = navController, Screen.Group.route)
     },
         containerColor = Color.White) {
         ScreenContent(modifier = Modifier.padding(it))
@@ -32,25 +31,21 @@ fun DashboardScreen(navController: NavHostController, modifier: Modifier = Modif
 
 @Composable
 private fun ScreenContent(modifier: Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Dashboard Screen",
+    Box(modifier = Modifier
+        .fillMaxSize(),
+        contentAlignment = Alignment.Center) {
+        Text(text = "Group Screen",
             fontFamily = FontFamily.Default,
             fontSize = 20.sp
         )
     }
 }
 
-
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
-fun DashboardScreenPreview() {
+fun GroupScreenPreview() {
     FinansiapTheme {
-        DashboardScreen(rememberNavController())
+        GroupScreen(rememberNavController())
     }
 }
