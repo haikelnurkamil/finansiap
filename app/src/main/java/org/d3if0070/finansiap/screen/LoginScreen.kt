@@ -94,7 +94,7 @@ fun LoginScreen(navController: NavHostController) {
                 },
                 shape = RoundedCornerShape(30.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor =   Outline
+                    unfocusedBorderColor = Outline
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation()
@@ -102,7 +102,9 @@ fun LoginScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedButton(
-                onClick = {},
+                onClick = {
+                          navController.navigate("dashboardScreen")
+                },
                 border = BorderStroke(1.dp, Outline),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.Black,
@@ -114,11 +116,18 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(80.dp))
         Row {
-            Text(text = "Belum punya akun?", fontSize = 14.sp, modifier = Modifier
-                .clickable {}
-                .padding(bottom = 30.dp))
+            Text(
+                text = "Belum punya akun?", fontSize = 14.sp, modifier = Modifier
+                    .padding(bottom = 30.dp)
+            )
             Spacer(modifier = Modifier.padding(2.dp))
-            ClickableText(text = AnnotatedString("Register"), onClick = {}, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold))
+            ClickableText(
+                text = AnnotatedString("Register"),
+                onClick = {
+                          navController.navigate("registerScreen")
+                },
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            )
         }
 
     }

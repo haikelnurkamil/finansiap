@@ -9,14 +9,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import org.d3if0070.finansiap.navigation.NavGraph
-import org.d3if0070.finansiap.screen.LoginScreen
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-
         setContent {
             FinansiapTheme {
                 Surface(

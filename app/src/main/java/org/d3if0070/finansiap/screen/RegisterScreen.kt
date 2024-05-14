@@ -43,7 +43,7 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun RegisterScreen(navHostController: NavHostController){
+fun RegisterScreen(navController: NavHostController) {
     var email by remember {
         mutableStateOf("")
     }
@@ -70,6 +70,7 @@ fun RegisterScreen(navHostController: NavHostController){
         ) {
             OutlinedTextField(
                 value = email,
+                singleLine = true,
                 onValueChange = {
                     email = it
                 },
@@ -94,7 +95,7 @@ fun RegisterScreen(navHostController: NavHostController){
                 },
                 shape = RoundedCornerShape(30.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor =   Outline
+                    unfocusedBorderColor = Outline
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation()
@@ -102,7 +103,9 @@ fun RegisterScreen(navHostController: NavHostController){
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedButton(
-                onClick = {},
+                onClick = {
+                    navController.navigate("loginScreen")
+                },
                 border = BorderStroke(1.dp, Outline),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.Black,
@@ -118,7 +121,13 @@ fun RegisterScreen(navHostController: NavHostController){
                 .clickable {}
                 .padding(bottom = 30.dp))
             Spacer(modifier = Modifier.padding(2.dp))
-            ClickableText(text = AnnotatedString("Login"), onClick = {}, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold))
+            ClickableText(
+                text = AnnotatedString("Login"),
+                onClick = {
+                          navController.navigate("loginScreen")
+                },
+                style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            )
         }
 
     }
