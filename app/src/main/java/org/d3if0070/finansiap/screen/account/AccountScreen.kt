@@ -1,4 +1,4 @@
-package org.d3if0070.finansiap.screen
+package org.d3if0070.finansiap.screen.account
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
