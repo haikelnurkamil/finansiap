@@ -24,11 +24,23 @@ import org.d3if0070.finansiap.screen.account.AccountScreen
 import org.d3if0070.finansiap.screen.dashboard.DashboardScreen
 import org.d3if0070.finansiap.screen.group.GroupScreen
 import org.d3if0070.finansiap.screen.auth.LoginScreen
+import org.d3if0070.finansiap.screen.auth.LoginViewModel
 import org.d3if0070.finansiap.screen.auth.RegisterScreen
+import org.d3if0070.finansiap.screen.group.CreateScreen
+import org.d3if0070.finansiap.screen.group.JoinScreen
+import org.d3if0070.finansiap.screen.group.ListGroupScreen
+import org.d3if0070.finansiap.screen.group.MenuScreen
+import org.d3if0070.finansiap.screen.group.anggota.FormUploadlScreen
+import org.d3if0070.finansiap.screen.group.anggota.MainScreenAnggota
+import org.d3if0070.finansiap.screen.group.bendahara.ApprovalScreen
+import org.d3if0070.finansiap.screen.group.bendahara.DetailScreen
+import org.d3if0070.finansiap.screen.group.bendahara.MainScreenBendahara
 
 @Composable
 fun NavGraph() {
     val navController: NavHostController = rememberNavController()
+    val loginViewModel: LoginViewModel
+
     var showBottomNavigation by remember {
         mutableStateOf(false)
     }
@@ -74,7 +86,7 @@ fun NavGraph() {
                 .padding(paddingValues)
         ) {
             composable(route = Screen.Login.route) {
-                LoginScreen(navController)
+                LoginScreen(loginViewModel = null, navController)
             }
             composable(route = Screen.Register.route) {
                 RegisterScreen(navController)
@@ -87,6 +99,33 @@ fun NavGraph() {
             }
             composable(route = Screen.Account.route) {
                 AccountScreen(navController)
+            }
+            composable(route = Screen.CreateGroup.route) {
+                CreateScreen(navController)
+            }
+            composable(route = Screen.JoinGroup.route) {
+                JoinScreen(navController)
+            }
+            composable(route = Screen.ListGroup.route) {
+                ListGroupScreen(navController)
+            }
+            composable(route = Screen.MainScreenAnggota.route) {
+                MainScreenAnggota(navController)
+            }
+            composable(route = Screen.MainScreenBendahara.route) {
+                MainScreenBendahara(navController)
+            }
+            composable(route = Screen.Menu.route) {
+                MenuScreen(navController)
+            }
+            composable(route = Screen.DetailScreen.route) {
+                DetailScreen(navController)
+            }
+            composable(route = Screen.Approval.route) {
+                ApprovalScreen(navController)
+            }
+            composable(route = Screen.FormUpload.route) {
+                FormUploadlScreen(navController)
             }
         }
         LaunchedEffect(navController.currentDestination) {

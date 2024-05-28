@@ -1,6 +1,5 @@
-package org.d3if0070.finansiap.screen.account
+package org.d3if0070.finansiap.screen.group
 
-import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -26,12 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
@@ -39,25 +45,29 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun AccountScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun CreateScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     Scaffold(bottomBar = {
-        BottomNavBar(navController = navController, Screen.Account.route)
+        BottomNavBar(navController = navController, Screen.Group.route)
     },
         containerColor = Color.White) {
-        ScreenContent(modifier = Modifier.padding(it), navController)
+        CreateGroup(modifier = Modifier.padding(it), navController)
     }
 }
-
 @Composable
-private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
-    var username by remember {
+private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
+    var nama by remember {
         mutableStateOf("")
     }
-    var email by remember {
+    var kode by remember {
         mutableStateOf("")
     }
-    var password by remember {
-        mutableStateOf("")
+
+    IconButton(onClick = {navController.popBackStack()}) {
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = stringResource(id = R.string.kembali),
+            tint = BackgroundBar
+        )
     }
 
     Column(
@@ -66,7 +76,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "My Account",
+            text = "Buat Grup",
             style = MaterialTheme.typography.headlineLarge,
             color = BackgroundBar
         )
@@ -74,10 +84,10 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         Spacer(modifier = Modifier.height(100.dp))
 
         OutlinedTextField(
-            value = username,
+            value = nama,
             singleLine = true,
-            onValueChange = { username = it },
-            label = { Text(text = "Nama Pengguna") },
+            onValueChange = { nama = it },
+            placeholder = { Text(text = "Masukan Nama Grup") },
             shape = RoundedCornerShape(24.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Outline
@@ -85,69 +95,44 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
             modifier = Modifier.fillMaxWidth(0.8f)
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = email,
-            singleLine = true,
-            onValueChange = { email = it },
-            label = { Text(text = "Email") },
-            modifier = Modifier.fillMaxWidth(0.8f),
-            shape = RoundedCornerShape(24.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Outline
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text(text = "Kata Sandi") },
-            modifier = Modifier.fillMaxWidth(0.8f),
-            visualTransformation = PasswordVisualTransformation(),
-            shape = RoundedCornerShape(24.dp),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Outline
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {  },
-            modifier = Modifier.fillMaxWidth(0.4f),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color.White,
-                containerColor = Color.Green
-            )
-        ) {
-            Text("Simpan")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = { navController.navigate("loginScreen")},
-            border = BorderStroke(2.dp, Color.Transparent),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Color.White,
-                containerColor = Color.Red
+        OutlinedTextField(
+            value = kode,
+            singleLine = true,
+            onValueChange = { kode = it },
+            placeholder = { Text(text = "Buat Kode Undangan") },
+            modifier = Modifier.fillMaxWidth(0.8f),
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Outline,
             ),
-            modifier = Modifier.fillMaxWidth(0.4f)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        OutlinedButton(
+            onClick = { navController.navigate("listGroupScreen") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            border = BorderStroke(color = Outline, width = 1.dp),
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
+                .height(50.dp),
         ) {
-            Text("Keluar")
+            Text(text = "Buat",
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal
+            )
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
-fun AccountScreenPreview() {
+fun CreateScreenPreview() {
     FinansiapTheme {
-        AccountScreen(rememberNavController())
+        CreateScreen(rememberNavController())
     }
 }
