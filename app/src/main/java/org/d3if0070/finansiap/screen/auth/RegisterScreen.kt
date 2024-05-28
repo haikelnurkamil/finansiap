@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
@@ -53,6 +54,12 @@ fun RegisterScreen(navController: NavHostController) {
         mutableStateOf("")
     }
 
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        AlertDialog (onDismiss = {showDialog=false})
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -67,7 +74,9 @@ fun RegisterScreen(navController: NavHostController) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(32.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp)
         ) {
             OutlinedTextField(
                 value = username,
@@ -122,7 +131,7 @@ fun RegisterScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedButton(
-                onClick = { navController.navigate("loginScreen") },
+                onClick = { navController.navigate("LoginScreen") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 border = BorderStroke(color = Outline, width = 1.dp),
                 shape = RoundedCornerShape(24.dp),
@@ -142,13 +151,13 @@ fun RegisterScreen(navController: NavHostController) {
 
         Row {
             Text(text = "Sudah memiliki akun?", fontSize = 14.sp, modifier = Modifier
-                .clickable { navController.navigate("LoginScreen")}
+                .clickable { navController.navigate("LoginScreen") }
                 .padding(bottom = 30.dp))
             Spacer(modifier = Modifier.padding(2.dp))
             ClickableText(
                 text = AnnotatedString("Masuk"),
                 onClick = {
-                          navController.navigate("loginScreen")
+                    navController.navigate("loginScreen")
                 },
                 style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
             )
