@@ -1,6 +1,26 @@
 <resources>
+    <!--  Beranda  -->
     <string name="app_name">Finansiap</string>
     <string name="home">Beranda</string>
     <string name="group">Grup</string>
     <string name="account">Akun</string>
+    <string name="tagihan_mendatang">Tagihan Mendatang</string>
+    <string name="list_grup">Daftar Grup</string>
+    <!--  Grup  -->
+    <string name="nama_grup1">Grup 1</string>
+    <string name="anggota_grup">Anggota Grup</string>
+    <string name="kembali">Kembali</string>
+    <string name="menu_grup">Menu</string>
+    <string name="lihat_bukti_pembayaran">Lihat Bukti Pembayaran</string>
+    <string name="detail_pembayaran">Detail Pembayaran</string>
+    <string name="data_unggahan">Data Pengunggah</string>
+    <string name="lihat_bukti">Lihat Bukti</string>
+    <string name="upload">Mengunggah</string>
+    <string name="upload_foto">Unggah Foto</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="nominal">105.000</string>
+    <string name="row_1">Bayar WI-FI 70.000</string>
+    <string name="row_2">Bayar Listrik 35.000</string>
+    <string name="row_3">TF Ke BCA A.N Haikel Nur Kamil</string>
+    <string name="row_4">Paling telat tanggal 1</string>
 </resources>

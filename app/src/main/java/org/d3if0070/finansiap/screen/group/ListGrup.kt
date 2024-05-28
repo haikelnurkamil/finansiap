@@ -1,20 +1,19 @@
-package org.d3if0070.finansiap.screen.dashboard
+package org.d3if0070.finansiap.screen.group
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import  androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,104 +38,54 @@ import org.d3if0070.finansiap.ui.theme.Outline
 
 
 @Composable
-fun DashboardScreen(navController: NavHostController) {
+fun ListGroupScreen(navController: NavHostController, modifier: Modifier = Modifier) {
     Scaffold(
         bottomBar = {
-            BottomNavBar(navController = navController, Screen.Dashboard.route)
+            BottomNavBar(navController = navController, Screen.Group.route)
         },
-        containerColor = Color.White
+        containerColor = Color.White,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.Group.route)
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(id = R.string.group),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
     ) {
         ScreenContent(modifier = Modifier.padding(it), navController)
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navController : NavHostController) {
+private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
     Column(
         modifier = modifier
-            .padding(32.dp)
             .fillMaxSize()
+            .padding(top = 10.dp)
+            .padding(36.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
             modifier = Modifier
-                .padding(top = 12.dp)
                 .fillMaxWidth(),
-            text = stringResource(id = R.string.tagihan_mendatang),
+            text = stringResource(R.string.list_grup),
             style = MaterialTheme.typography.titleLarge,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = BackgroundBar
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    text = stringResource(R.string.nominal),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 1.dp)
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.row_1),
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(R.string.row_2),
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            modifier = Modifier
-                .fillMaxWidth(),
-            text = stringResource(id = R.string.list_grup),
-            style = MaterialTheme.typography.titleMedium,
             color = BackgroundBar,
-            fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-
-        Spacer(modifier = Modifier.height(15.dp))
-
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(16.dp),
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedButton(
                 onClick = {navController.navigate("mainScreen1")},
@@ -157,7 +105,7 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedButton(
                 onClick = {navController.navigate("mainScreen2")},
@@ -165,7 +113,7 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
                 border = BorderStroke(color = Outline, width = 2.dp),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(1f)
                     .height(60.dp),
             ) {
                 Text(
@@ -180,11 +128,10 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun DashboardScreenPreview() {
+fun ListGroupScreenPreview() {
     FinansiapTheme {
-        DashboardScreen(rememberNavController())
+        ListGroupScreen(rememberNavController())
     }
 }

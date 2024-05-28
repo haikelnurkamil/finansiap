@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413003926469",
+    "project_id": "finansiap-f10c0",
+    "storage_bucket": "finansiap-f10c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413003926469:android:37a9516f706c3f429359ac",
+        "android_client_info": {
+          "package_name": "org.d3if0070.finansiap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5FVOXLB_jk4lZqhSSzDI-hmfasoDWhPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
