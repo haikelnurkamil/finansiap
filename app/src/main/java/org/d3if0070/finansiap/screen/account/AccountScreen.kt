@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
@@ -58,6 +59,11 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
     }
     var password by remember {
         mutableStateOf("")
+    }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        AlertDialog (onDismiss = {showDialog=false})
     }
 
     Column(
@@ -118,7 +124,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = {  },
+            onClick = {showDialog=true },
             modifier = Modifier.fillMaxWidth(0.4f),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.White,

@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -37,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
+import org.d3if0070.finansiap.screen.auth.data.component.PasswordMyTextFieldComponent
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
@@ -46,7 +47,7 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null, navController: NavHostCo
 
     val loginUiState = loginViewModel?.loginUiState
     val isError = loginUiState?.loginError != null
-    val context = LocalContext.current
+//    val context = LocalContext.current
 
 
     var email by remember {
@@ -54,6 +55,12 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null, navController: NavHostCo
     }
     var password by remember {
         mutableStateOf("")
+    }
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        AlertDialog (onDismiss = {showDialog=false})
     }
 
     Column(
@@ -89,20 +96,11 @@ fun LoginScreen(loginViewModel: LoginViewModel? = null, navController: NavHostCo
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                },
-                label = {
-                    Text(text = "Kata Sandi")
-                },
-                shape = RoundedCornerShape(24.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Outline
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+            PasswordMyTextFieldComponent(
+                labelValue = "",
+                onTextSelected = {
+
+                }
             )
             Spacer(modifier = Modifier.height(20.dp))
 

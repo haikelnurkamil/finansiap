@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
@@ -92,6 +93,11 @@ fun FormUploadlScreen(navController: NavHostController) {
 private fun ScreenContent(modifier: Modifier) {
     var desc by remember {
         mutableStateOf("")
+    }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        AlertDialog (onDismiss = {showDialog=false})
     }
 
     Column(
@@ -173,7 +179,7 @@ private fun ScreenContent(modifier: Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {showDialog=true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     border = BorderStroke(color = Color.Green, width = 2.dp),
                     shape = RoundedCornerShape(10.dp),
@@ -200,7 +206,7 @@ private fun ScreenContent(modifier: Modifier) {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 OutlinedButton(
-                    onClick = {},
+                    onClick = {showDialog=true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     border = BorderStroke(color = Color.Red, width = 2.dp),
                     shape = RoundedCornerShape(10.dp),

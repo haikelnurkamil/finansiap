@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
@@ -53,6 +54,7 @@ fun CreateScreen(navController: NavHostController, modifier: Modifier = Modifier
         CreateGroup(modifier = Modifier.padding(it), navController)
     }
 }
+
 @Composable
 private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
     var nama by remember {
@@ -60,6 +62,11 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
     }
     var kode by remember {
         mutableStateOf("")
+    }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog){
+        AlertDialog (onDismiss = {showDialog=false})
     }
 
     IconButton(onClick = {navController.popBackStack()}) {
