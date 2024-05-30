@@ -54,6 +54,7 @@ fun CreateScreen(navController: NavHostController, modifier: Modifier = Modifier
         CreateGroup(modifier = Modifier.padding(it), navController)
     }
 }
+
 @Composable
 private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
     var nama by remember {

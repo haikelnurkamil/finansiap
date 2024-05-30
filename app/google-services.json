@@ -1,26 +1,45 @@
 {
   "project_info": {
-    "project_number": "413003926469",
-    "project_id": "finansiap-f10c0",
-    "storage_bucket": "finansiap-f10c0.appspot.com"
+    "project_number": "724137125572",
+    "firebase_url": "https://finansiap-2a3e3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "finansiap-2a3e3",
+    "storage_bucket": "finansiap-2a3e3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:413003926469:android:37a9516f706c3f429359ac",
+        "mobilesdk_app_id": "1:724137125572:android:b5523820f6a98fada3cb91",
         "android_client_info": {
           "package_name": "org.d3if0070.finansiap"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "724137125572-th2nrau7hj0tf2qs06h8n1anhts8vuuc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.d3if0070.finansiap",
+            "certificate_hash": "84b2e9ea54bcbc67e8641f54a6368cdcf7a93f00"
+          }
+        },
+        {
+          "client_id": "724137125572-79lj3rpsknhihie0nvdpj22bmk2jgd6j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyA5FVOXLB_jk4lZqhSSzDI-hmfasoDWhPw"
+          "current_key": "AIzaSyBiZW2lpe36RqzMUvKXqkielT7jtXF21ak"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "724137125572-79lj3rpsknhihie0nvdpj22bmk2jgd6j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

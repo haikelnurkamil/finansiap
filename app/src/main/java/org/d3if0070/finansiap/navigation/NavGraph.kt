@@ -81,7 +81,7 @@ fun NavGraph() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Login.route,
+            startDestination = Screen.Register.route,
             modifier = Modifier
                 .padding(paddingValues)
         ) {

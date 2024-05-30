@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "724137125572",
+    "firebase_url": "https://finansiap-2a3e3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "finansiap-2a3e3",
+    "storage_bucket": "finansiap-2a3e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724137125572:android:b5523820f6a98fada3cb91",
+        "android_client_info": {
+          "package_name": "org.d3if0070.finansiap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiZW2lpe36RqzMUvKXqkielT7jtXF21ak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

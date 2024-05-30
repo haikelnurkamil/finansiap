@@ -35,15 +35,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
+import org.d3if0070.finansiap.screen.auth.data.RegisterUIEvent
+import org.d3if0070.finansiap.screen.auth.data.RegisterViewModel
+import org.d3if0070.finansiap.screen.auth.data.component.ButtonComponent
+import org.d3if0070.finansiap.screen.auth.data.component.MyTextFieldComponent
+import org.d3if0070.finansiap.screen.auth.data.component.PasswordMyTextFieldComponent
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun RegisterScreen(navController: NavHostController) {
+fun RegisterScreen(
+    navController: NavHostController,
+    registerViewModel: RegisterViewModel = viewModel()
+) {
     var username by remember {
         mutableStateOf("")
     }
@@ -78,73 +87,37 @@ fun RegisterScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(32.dp)
         ) {
-            OutlinedTextField(
-                value = username,
-                singleLine = true,
-                onValueChange = {
-                    username = it
-                },
-                label = {
-                    Text(text = "Nama Pengguna")
-                },
-                shape = RoundedCornerShape(24.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Outline
-                ),
-                modifier = Modifier.fillMaxWidth()
+            MyTextFieldComponent(
+                labelValue = "Nama Pengguna",
+                onTextSelected = {
+                    registerViewModel.onEvent(RegisterUIEvent.UserNameChanged(it))
+                }
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = email,
-                singleLine = true,
-                onValueChange = {
-                    email = it
-                },
-                label = {
-                    Text(text = "Email")
-                },
-                shape = RoundedCornerShape(24.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Outline
-                ),
-                modifier = Modifier.fillMaxWidth()
+            MyTextFieldComponent(
+                labelValue = "Email",
+                onTextSelected = {
+                    registerViewModel.onEvent(RegisterUIEvent.EmailChanged(it))
+                }
             )
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = {
-                    password = it
+            PasswordMyTextFieldComponent(
+                labelValue = "Password",
+                onTextSelected = {
+                    registerViewModel.onEvent(RegisterUIEvent.PasswordChanged(it))
                 },
-                label = {
-                    Text(text = "Kata Sandi")
-                },
-                shape = RoundedCornerShape(24.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Outline
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            OutlinedButton(
-                onClick = { navController.navigate("LoginScreen") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                border = BorderStroke(color = Outline, width = 1.dp),
-                shape = RoundedCornerShape(24.dp),
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .height(50.dp),
-            ) {
-                Text(text = "Buat",
-                    color = Color.Black,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal
-                )
-            }
+            ButtonComponent(
+                value = "Buat",
+                onButtonClicked = { registerViewModel.onEvent(RegisterUIEvent.RegisterButtonClicked) },
+                isEnabled = registerViewModel.allValidationsPassed.value,
+                navController
+            )
         }
 
         Spacer(modifier = Modifier.height(80.dp))
