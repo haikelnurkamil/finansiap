@@ -1,6 +1,5 @@
 package org.d3if0070.finansiap.screen.account
 
-import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
@@ -40,7 +38,7 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun AccountScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun AccountScreen(navController: NavHostController) {
     Scaffold(bottomBar = {
         BottomNavBar(navController = navController, Screen.Account.route)
     },
@@ -51,20 +49,17 @@ fun AccountScreen(navController: NavHostController, modifier: Modifier = Modifie
 
 @Composable
 private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
-    var username by remember {
+
+    val username by remember {
         mutableStateOf("")
     }
-    var email by remember {
+    val email by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
     var showDialog by remember { mutableStateOf(false) }
-
-    if (showDialog){
-        AlertDialog (onDismiss = {showDialog=false})
-    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -82,7 +77,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         OutlinedTextField(
             value = username,
             singleLine = true,
-            onValueChange = { username = it },
+            onValueChange = { },
             label = { Text(text = "Nama Pengguna") },
             shape = RoundedCornerShape(24.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -96,7 +91,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         OutlinedTextField(
             value = email,
             singleLine = true,
-            onValueChange = { email = it },
+            onValueChange = { },
             label = { Text(text = "Email") },
             modifier = Modifier.fillMaxWidth(0.8f),
             shape = RoundedCornerShape(24.dp),
