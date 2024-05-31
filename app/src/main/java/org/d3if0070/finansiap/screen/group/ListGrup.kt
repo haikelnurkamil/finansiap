@@ -38,7 +38,7 @@ import org.d3if0070.finansiap.ui.theme.Outline
 
 
 @Composable
-fun ListGroupScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun ListGroupScreen(navController: NavHostController) {
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController, Screen.Group.route)

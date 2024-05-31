@@ -1,6 +1,5 @@
 package org.d3if0070.finansiap.screen.group
 
-import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,7 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun GroupScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun GroupScreen(navController: NavHostController) {
     Scaffold(bottomBar = {
         BottomNavBar(navController = navController, Screen.Group.route)
     },

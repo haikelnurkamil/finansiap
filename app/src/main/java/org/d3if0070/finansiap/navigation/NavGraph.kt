@@ -6,13 +6,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -24,14 +20,16 @@ import org.d3if0070.finansiap.screen.account.AccountScreen
 import org.d3if0070.finansiap.screen.dashboard.DashboardScreen
 import org.d3if0070.finansiap.screen.group.GroupScreen
 import org.d3if0070.finansiap.screen.auth.LoginScreen
-import org.d3if0070.finansiap.screen.auth.LoginViewModel
+
 import org.d3if0070.finansiap.screen.auth.RegisterScreen
+import org.d3if0070.finansiap.screen.auth.data.LoginViewModel
 import org.d3if0070.finansiap.screen.group.CreateScreen
 import org.d3if0070.finansiap.screen.group.JoinScreen
 import org.d3if0070.finansiap.screen.group.ListGroupScreen
 import org.d3if0070.finansiap.screen.group.MenuScreen
 import org.d3if0070.finansiap.screen.group.anggota.FormUploadlScreen
 import org.d3if0070.finansiap.screen.group.anggota.MainScreenAnggota
+import org.d3if0070.finansiap.screen.group.anggota.SuccessUploadScreen
 import org.d3if0070.finansiap.screen.group.bendahara.ApprovalScreen
 import org.d3if0070.finansiap.screen.group.bendahara.DetailScreen
 import org.d3if0070.finansiap.screen.group.bendahara.MainScreenBendahara
@@ -39,7 +37,7 @@ import org.d3if0070.finansiap.screen.group.bendahara.MainScreenBendahara
 @Composable
 fun NavGraph() {
     val navController: NavHostController = rememberNavController()
-    val loginViewModel: LoginViewModel
+    val loginViewModel: LoginViewModel = viewModel()
 
     var showBottomNavigation by remember {
         mutableStateOf(false)
@@ -52,11 +50,11 @@ fun NavGraph() {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
 
-                    listOfNavItems.forEach { navItems ->
+                    listOfNavItems.forEach { navItem ->
                         NavigationBarItem(
-                            selected = currentDestination?.hierarchy?.any { it.route == navItems.route } == true,
+                            selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
                             onClick = {
-                                navController.navigate(navItems.route) {
+                                navController.navigate(navItem.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
                                     }
@@ -66,12 +64,12 @@ fun NavGraph() {
                             },
                             icon = {
                                 Icon(
-                                    imageVector = navItems.icon,
+                                    imageVector = navItem.icon,
                                     contentDescription = null
                                 )
                             },
                             label = {
-                                Text(text = navItems.label)
+                                Text(text = navItem.label)
                             }
                         )
                     }
@@ -81,55 +79,58 @@ fun NavGraph() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Register.route,
-            modifier = Modifier
-                .padding(paddingValues)
+            startDestination = Screen.Login.route,
+            modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = Screen.Login.route) {
-                LoginScreen(loginViewModel = null, navController)
+                LoginScreen(navController = navController)
             }
             composable(route = Screen.Register.route) {
-                RegisterScreen(navController)
+                RegisterScreen(navController = navController)
             }
             composable(route = Screen.Dashboard.route) {
-                DashboardScreen(navController)
+                DashboardScreen(navController = navController)
             }
             composable(route = Screen.Group.route) {
-                GroupScreen(navController)
+                GroupScreen(navController = navController)
             }
             composable(route = Screen.Account.route) {
-                AccountScreen(navController)
+                AccountScreen(navController = navController)
             }
             composable(route = Screen.CreateGroup.route) {
-                CreateScreen(navController)
+                CreateScreen(navController = navController)
             }
             composable(route = Screen.JoinGroup.route) {
-                JoinScreen(navController)
+                JoinScreen(navController = navController)
             }
             composable(route = Screen.ListGroup.route) {
-                ListGroupScreen(navController)
+                ListGroupScreen(navController = navController)
             }
             composable(route = Screen.MainScreenAnggota.route) {
-                MainScreenAnggota(navController)
+                MainScreenAnggota(navController = navController)
             }
             composable(route = Screen.MainScreenBendahara.route) {
-                MainScreenBendahara(navController)
+                MainScreenBendahara(navController = navController)
             }
             composable(route = Screen.Menu.route) {
-                MenuScreen(navController)
+                MenuScreen(navController = navController)
             }
             composable(route = Screen.DetailScreen.route) {
-                DetailScreen(navController)
+                DetailScreen(navController = navController)
             }
             composable(route = Screen.Approval.route) {
-                ApprovalScreen(navController)
+                ApprovalScreen(navController = navController)
             }
             composable(route = Screen.FormUpload.route) {
-                FormUploadlScreen(navController)
+                FormUploadlScreen(navController = navController)
+            }
+            composable(route = Screen.SuccessUpload.route) {
+                SuccessUploadScreen(navController = navController)
             }
         }
-        LaunchedEffect(navController.currentDestination) {
-            val currentDestination = navController.currentDestination
+
+        LaunchedEffect(navController.currentBackStackEntryAsState()) {
+            val currentDestination = navController.currentBackStackEntry?.destination
             showBottomNavigation = listOf(
                 Screen.Dashboard.route,
                 Screen.Group.route,
@@ -138,10 +139,3 @@ fun NavGraph() {
         }
     }
 }
-
-
-
-
-
-
-

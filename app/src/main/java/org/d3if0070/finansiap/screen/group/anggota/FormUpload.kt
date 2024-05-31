@@ -1,8 +1,16 @@
 package org.d3if0070.finansiap.screen.group.anggota
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -48,7 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
@@ -85,19 +94,22 @@ fun FormUploadlScreen(navController: NavHostController) {
         },
         containerColor = Color.White
     ) {
-        ScreenContent(modifier = Modifier.padding(it))
+        ScreenContent(modifier = Modifier.padding(it), navController)
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier) {
+private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
     var desc by remember {
         mutableStateOf("")
     }
-    var showDialog by remember { mutableStateOf(false) }
 
-    if (showDialog){
-        AlertDialog (onDismiss = {showDialog=false})
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val  launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
     }
 
     Column(
@@ -132,8 +144,33 @@ private fun ScreenContent(modifier: Modifier) {
                 Image(
                     painter = painterResource(id = R.drawable.add),
                     contentDescription = "upload",
-                    modifier = Modifier.size(80.dp).padding(top = 15.dp)
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(top = 15.dp)
+                        .clickable { launcher.launch("image/*" ) }
                 )
+                imageUri.let {
+                    if (Build.VERSION.SDK_INT < 28){
+                        bitmap.value = MediaStore.Images
+                            .Media.getBitmap(context.contentResolver,it)
+                    }else{
+                        val source = it?.let { it1 ->
+                            ImageDecoder.createSource(context.contentResolver,
+                                it1
+                            )
+                        }
+                        bitmap.value = source?.let { it1 -> ImageDecoder.decodeBitmap(it1) }
+                    }
+                    bitmap.value?.let {btm ->
+                        Image(
+                            bitmap = btm.asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(400.dp)
+                                .padding(20.dp)
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.width(32.dp))
 
@@ -179,7 +216,7 @@ private fun ScreenContent(modifier: Modifier) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 OutlinedButton(
-                    onClick = {showDialog=true },
+                    onClick = { navController.navigate("successUploadScreen") },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     border = BorderStroke(color = Color.Green, width = 2.dp),
                     shape = RoundedCornerShape(10.dp),
@@ -206,7 +243,7 @@ private fun ScreenContent(modifier: Modifier) {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 OutlinedButton(
-                    onClick = {showDialog=true },
+                    onClick = { navController.popBackStack() },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     border = BorderStroke(color = Color.Red, width = 2.dp),
                     shape = RoundedCornerShape(10.dp),

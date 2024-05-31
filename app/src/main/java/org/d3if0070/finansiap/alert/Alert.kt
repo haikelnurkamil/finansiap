@@ -1,4 +1,4 @@
-package org.d3if0070.finansiap.Alert
+package org.d3if0070.finansiap.alert
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 
 @Composable
 fun AlertDialog(
@@ -71,4 +73,13 @@ fun AlertDialog(
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun AletPre() {
+    FinansiapTheme {
+        AlertDialog {
+        }
+    }
 }

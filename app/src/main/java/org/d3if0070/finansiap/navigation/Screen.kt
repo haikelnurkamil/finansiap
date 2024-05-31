@@ -15,4 +15,5 @@ sealed class Screen(val route: String) {
         data object Menu: Screen("menuScreen")
         data object Approval: Screen("approvalScreen")
         data object FormUpload: Screen("formUploadScreen")
+        data object SuccessUpload: Screen("successUploadScreen")
 }

@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if0070.finansiap.Alert.AlertDialog
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.navigation.Screen
@@ -46,7 +45,7 @@ import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 
 @Composable
-fun JoinScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun JoinScreen(navController: NavHostController) {
     Scaffold(bottomBar = {
         BottomNavBar(navController = navController, Screen.Group.route)
     },
@@ -67,12 +66,6 @@ private fun JoinGroup(modifier: Modifier, navController: NavHostController) {
                 tint = BackgroundBar
             )
         }
-    var showDialog by remember { mutableStateOf(false) }
-
-    if (showDialog){
-        AlertDialog (onDismiss = {showDialog=false})
-    }
-
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
