@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.component.BottomNavBar
@@ -36,6 +37,7 @@ import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
+import org.d3if0070.finansiap.viewmodel.UserViewModel
 
 @Composable
 fun AccountScreen(navController: NavHostController) {
@@ -43,12 +45,12 @@ fun AccountScreen(navController: NavHostController) {
         BottomNavBar(navController = navController, Screen.Account.route)
     },
         containerColor = Color.White) {
-        ScreenContent(modifier = Modifier.padding(it), navController)
+        ScreenContent(modifier = Modifier.padding(it), navController,viewModel())
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
+private fun ScreenContent(modifier: Modifier, navController: NavHostController, viewModel: UserViewModel) {
 
     val username by remember {
         mutableStateOf("")
@@ -132,7 +134,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { navController.navigate("loginScreen")},
+            onClick = { viewModel.logout(navController) },
             border = BorderStroke(2.dp, Color.Transparent),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.White,
