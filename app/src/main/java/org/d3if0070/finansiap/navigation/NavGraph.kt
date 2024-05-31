@@ -22,7 +22,6 @@ import org.d3if0070.finansiap.screen.group.GroupScreen
 import org.d3if0070.finansiap.screen.auth.LoginScreen
 
 import org.d3if0070.finansiap.screen.auth.RegisterScreen
-import org.d3if0070.finansiap.screen.auth.data.LoginViewModel
 import org.d3if0070.finansiap.screen.group.CreateScreen
 import org.d3if0070.finansiap.screen.group.JoinScreen
 import org.d3if0070.finansiap.screen.group.ListGroupScreen
@@ -37,7 +36,6 @@ import org.d3if0070.finansiap.screen.group.bendahara.MainScreenBendahara
 @Composable
 fun NavGraph() {
     val navController: NavHostController = rememberNavController()
-    val loginViewModel: LoginViewModel = viewModel()
 
     var showBottomNavigation by remember {
         mutableStateOf(false)
@@ -79,14 +77,14 @@ fun NavGraph() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Login.route,
+            startDestination = Screen.Register.route,
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = Screen.Login.route) {
-                LoginScreen(navController = navController)
+                LoginScreen(navController = navController,viewModel())
             }
             composable(route = Screen.Register.route) {
-                RegisterScreen(navController = navController)
+                RegisterScreen(navController = navController, viewModel())
             }
             composable(route = Screen.Dashboard.route) {
                 DashboardScreen(navController = navController)
