@@ -23,4 +23,7 @@
     <string name="row_2">Bayar Listrik 35.000</string>
     <string name="row_3">TF Ke BCA A.N Haikel Nur Kamil</string>
     <string name="row_4">Paling telat tanggal 1</string>
+    <string name="bttn_ubah">Ubah</string>
+    <string name="bttn_simpan">Simpan</string>
+    <string name="list_kosong">List Kosong\n</string>
 </resources>

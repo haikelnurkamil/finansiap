@@ -21,7 +21,7 @@ val listOfNavItems = listOf(
     NavItems(
         label = "Grup",
         icon = Icons.Default.Person,
-        route = Screen.Group.route
+        route = Screen.ListGroup.route
     ),
     NavItems(
         label = "Akun",

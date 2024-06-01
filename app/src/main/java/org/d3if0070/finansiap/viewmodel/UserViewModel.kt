@@ -25,6 +25,7 @@ class UserViewModel : ViewModel() {
     private val _registrationError = MutableStateFlow<String?>(null)
     val registrationError: StateFlow<String?> = _registrationError
 
+
     fun registerUser(user: User) {
         viewModelScope.launch {
             auth.createUserWithEmailAndPassword(user.email, user.password)
@@ -82,6 +83,10 @@ class UserViewModel : ViewModel() {
     private val _updateError = MutableStateFlow<String?>(null)
     val updateError: StateFlow<String?> get() = _updateError
 
+    private val _logoutSuccess = MutableStateFlow(false)
+    val logoutSuccess: StateFlow<Boolean> = _logoutSuccess
+
+
     init {
         fetchCurrentUser()
     }
@@ -92,6 +97,7 @@ class UserViewModel : ViewModel() {
             fetchUserData(it)
         }
     }
+
 
     fun fetchUserData(userId: String) {
         viewModelScope.launch {
@@ -105,7 +111,8 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun update(userName: String, newPassword: String?, email: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+
+    fun update(userName: String, email: String, password: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val userId = _currentUser.value?.uid ?: return
         val userDocRef = userRepository.firestore.collection("users").document(userId)
 
@@ -113,28 +120,33 @@ class UserViewModel : ViewModel() {
             try {
                 val updates = hashMapOf<String, Any>(
                     "userName" to userName,
-                    "email" to email
+                    "email" to email,
                 )
 
-                if (!newPassword.isNullOrBlank()) {
+                if (!password.isNullOrBlank()) {
                     val user = userRepository.auth.currentUser
-                    user?.updatePassword(newPassword)?.await()
-                    updates["password"] = newPassword
+                    user?.updatePassword(password)?.await()
+                    updates["password"] = password
                 }
 
                 userDocRef.update(updates).await()
                 fetchUserData(userId) // Refresh current user data
                 _updateSuccess.value = true
                 _updateError.value = null
-                Log.d("UserViewModel", "User profile updated successfully.")
+                Log.d("UserViewModel", "Berhasil Diubah.")
                 onSuccess()
             } catch (e: Exception) {
                 _updateError.value = e.message
                 _updateSuccess.value = false
-                Log.d("UserViewModel", "Error updating user profile: ${e.message}")
+                Log.d("UserViewModel", "Gagal Mengubah: ${e.message}")
                 onFailure(e)
             }
         }
+    }
+
+    fun resetUpdateState() {
+        _updateSuccess.value = false
+        _updateError.value = null
     }
 
     private fun saveUserToFirestore(user: User) {
@@ -148,17 +160,26 @@ class UserViewModel : ViewModel() {
             }
     }
 
+    fun resetLogoutState(){
+        _logoutSuccess.value = false
+    }
+
     fun logout(navController: NavHostController) {
         val firebaseAuth = FirebaseAuth.getInstance()
         firebaseAuth.signOut()
         val authStateListener = FirebaseAuth.AuthStateListener {
             if (it.currentUser == null) {
-                Log.d(TAG, "Inside sign outsuccess")
-                navController.navigate(Screen.Login.route)
+                Log.d(TAG, "Anda Telah Keluar")
+                _logoutSuccess.value = true
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) {inclusive = true }
+                }
             } else {
-                Log.d(TAG, "Inside sign out is not success")
+                Log.d(TAG, "Gagal Keluar")
             }
         }
         firebaseAuth.addAuthStateListener(authStateListener)
     }
 }
+
+

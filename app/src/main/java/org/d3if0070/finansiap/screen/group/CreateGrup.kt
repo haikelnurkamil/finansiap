@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,21 +29,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
+import org.d3if0070.finansiap.firebase.GrupRepository
+import org.d3if0070.finansiap.model.Grup
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
+import org.d3if0070.finansiap.util.GrupViewModelFactory
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
 
 @Composable
 fun CreateScreen(navController: NavHostController) {
@@ -56,12 +65,18 @@ fun CreateScreen(navController: NavHostController) {
 
 @Composable
 private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
-    var nama by remember {
-        mutableStateOf("")
-    }
-    var kode by remember {
-        mutableStateOf("")
-    }
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val repository = GrupRepository()
+    val factory = GrupViewModelFactory(repository)
+    val viewModel: GrupViewModel = viewModel(factory = factory)
+
+    var namaGrupError by remember { mutableStateOf(false) }
+    var kodeGrupError by remember { mutableStateOf(false) }
+
+    var nama by remember { mutableStateOf("") }
+    var kode by remember { mutableStateOf("") }
+
     IconButton(onClick = {navController.popBackStack()}) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
@@ -90,10 +105,15 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
             placeholder = { Text(text = "Masukan Nama Grup") },
             shape = RoundedCornerShape(24.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Outline
+                unfocusedBorderColor = Outline,
             ),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
             modifier = Modifier.fillMaxWidth(0.8f)
         )
+        if (namaGrupError) {
+            Text(text = "Nama Grup tidak boleh kosong", color = Color.Red)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -107,14 +127,27 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Outline,
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
         )
+        if (namaGrupError) {
+            Text(text = "Kode Grup tidak boleh kosong", color = Color.Red)
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedButton(
-            onClick = { navController.navigate("listGroupScreen") },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            onClick = {
+                namaGrupError = nama.isEmpty()
+                kodeGrupError = kode.isEmpty()
+
+                if (namaGrupError || kodeGrupError){
+                    return@OutlinedButton
+                } else {
+                    viewModel.insert(nama, kode)
+                    navController.navigate(Screen.ListGroup.route)
+                }},
+            colors = ButtonDefaults.buttonColors(containerColor = Outline),
             border = BorderStroke(color = Outline, width = 1.dp),
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
@@ -122,7 +155,7 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
                 .height(50.dp),
         ) {
             Text(text = "Buat",
-                color = Color.Black,
+                color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
             )

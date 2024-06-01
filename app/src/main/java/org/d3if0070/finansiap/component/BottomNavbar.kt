@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,7 +50,10 @@ fun BottomNavBar(navController: NavHostController, currentRoute: String) {
                 },
                 label = {
                     Text(text = navItems.label, color = if (navItems.route == currentRoute) Outline else Color.White)
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = BackgroundBar,
+                )
             )
         }
     }
