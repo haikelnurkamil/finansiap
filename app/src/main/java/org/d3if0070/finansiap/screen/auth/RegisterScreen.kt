@@ -2,7 +2,6 @@ package org.d3if0070.finansiap.screen.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
+
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -87,14 +87,14 @@ fun RegisterScreen(
 
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess) {
-            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
-            // Navigate to another screen if needed
+            Toast.makeText(context, "Registrasi Berhasil", Toast.LENGTH_SHORT).show()
+            navController.navigate(Screen.Login.route)
         }
     }
 
     LaunchedEffect(registrationError) {
         registrationError?.let {
-            Toast.makeText(context, "Registration Failed: $it", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Registrasi Gagal: $it", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -123,7 +123,7 @@ fun RegisterScreen(
                 singleLine = true,
                 isError = userNameError,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Outline,
                     focusedBorderColor = Outline
@@ -147,7 +147,7 @@ fun RegisterScreen(
                 singleLine = true,
                 isError = emailError,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Outline,
                     focusedBorderColor = Outline
@@ -171,7 +171,7 @@ fun RegisterScreen(
                 singleLine = true,
                 isError = passwordError,
                 modifier = Modifier
-                    .fillMaxWidth(0.9f),
+                    .fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Outline,
                     focusedBorderColor = Outline
