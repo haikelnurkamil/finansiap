@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.firebase.GrupRepository
@@ -71,13 +72,16 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
     val factory = GrupViewModelFactory(repository)
     val viewModel: GrupViewModel = viewModel(factory = factory)
 
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userEmail = currentUser?.email ?: "unknown"
+
     var namaGrupError by remember { mutableStateOf(false) }
     var kodeGrupError by remember { mutableStateOf(false) }
 
     var nama by remember { mutableStateOf("") }
     var kode by remember { mutableStateOf("") }
 
-    IconButton(onClick = {navController.popBackStack()}) {
+    IconButton(onClick = { navController.popBackStack() }) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = stringResource(id = R.string.kembali),
@@ -130,7 +134,7 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
         )
-        if (namaGrupError) {
+        if (kodeGrupError) {
             Text(text = "Kode Grup tidak boleh kosong", color = Color.Red)
         }
 
@@ -141,12 +145,13 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
                 namaGrupError = nama.isEmpty()
                 kodeGrupError = kode.isEmpty()
 
-                if (namaGrupError || kodeGrupError){
+                if (namaGrupError || kodeGrupError) {
                     return@OutlinedButton
                 } else {
-                    viewModel.insert(nama, kode)
+                    viewModel.insert(nama, kode, userEmail)
                     navController.navigate(Screen.ListGroup.route)
-                }},
+                }
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Outline),
             border = BorderStroke(color = Outline, width = 1.dp),
             shape = RoundedCornerShape(24.dp),
@@ -162,6 +167,7 @@ private fun CreateGroup(modifier: Modifier, navController: NavHostController) {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun CreateScreenPreview() {

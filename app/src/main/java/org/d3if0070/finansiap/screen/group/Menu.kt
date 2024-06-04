@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -34,14 +37,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
+import org.d3if0070.finansiap.firebase.GrupRepository
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
+import org.d3if0070.finansiap.model.Grup
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(navController: NavHostController) {
+fun MenuScreen(navController: NavHostController, grupId: String, viewModel: GrupViewModel) {
+    val grup by viewModel.currentGrup.collectAsState()
+
+    LaunchedEffect(grupId) {
+        viewModel.getGrupById(grupId)
+    }
+
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController, Screen.Group.route)
@@ -58,7 +70,7 @@ fun MenuScreen(navController: NavHostController) {
                     }
                 },
                 title = {
-                    Text(text = (stringResource(id = R.string.anggota_grup)))
+                    Text(text = stringResource(id = R.string.anggota_grup))
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = BackgroundBar,
@@ -67,13 +79,15 @@ fun MenuScreen(navController: NavHostController) {
             )
         },
         containerColor = Color.White
-    ) {
-        ScreenContent(modifier = Modifier.padding(it))
+    ) { innerPadding ->
+        grup?.let {
+            ScreenContent(modifier = Modifier.padding(innerPadding), it)
+        }
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier) {
+private fun ScreenContent(modifier: Modifier, grup: Grup) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -81,7 +95,7 @@ private fun ScreenContent(modifier: Modifier) {
     ) {
         Text(
             modifier = Modifier.padding(bottom = 20.dp),
-            text = "4 Anggota",
+            text = "${grup.joinedUsers.size} Anggota",
             color = BackgroundBar,
             fontSize = 20.sp,
             style = MaterialTheme.typography.titleMedium
@@ -95,67 +109,39 @@ private fun ScreenContent(modifier: Modifier) {
                 )
                 .padding(24.dp),
         ) {
-            Row {
-                Text(
-                    text = "Haikel Nur Kamil",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.fillMaxWidth(0.9f)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.key_logo),
-                    contentDescription = "bendahara")
+            grup.joinedUsers.forEachIndexed { index, user ->
+                Row {
+                    Text(
+                        text = user,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        modifier = Modifier.fillMaxWidth(0.9f)
+                    )
+                    if (user == grup.bendahara) {
+                        Image(
+                            painter = painterResource(id = R.drawable.key_logo),
+                            contentDescription = "bendahara"
+                        )
+                    }
+                }
+
+                if (index != grup.joinedUsers.size - 1) {
+                    Divider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        thickness = 1.dp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
             }
-
-            Divider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                thickness = 1.dp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Muhammad Bintang",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-            Divider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                thickness = 1.dp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Rayhan Fahrezy",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-            Divider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                thickness = 1.dp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Ficky Chikara",
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-            Divider(
-                modifier = Modifier.padding(vertical = 12.dp),
-                thickness = 1.dp
-            )
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun MenuScreenPreview() {
-    FinansiapTheme {
-        MenuScreen(rememberNavController())
-    }
+    val navController = rememberNavController()
+    val viewModel = GrupViewModel(GrupRepository())
+    MenuScreen(navController, "sample_grup_id", viewModel)
 }

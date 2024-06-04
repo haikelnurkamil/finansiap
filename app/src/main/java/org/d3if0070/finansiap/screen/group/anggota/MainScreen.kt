@@ -28,6 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,18 +43,26 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
+import org.d3if0070.finansiap.firebase.GrupRepository
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
-
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
+import org.d3if0070.finansiap.model.Grup
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreenAnggota(navController: NavHostController) {
+fun MainScreenAnggota(navController: NavHostController, grupId: String, viewModel: GrupViewModel) {
+    val grup by viewModel.currentGrup.collectAsState()
+
+    LaunchedEffect(grupId) {
+        viewModel.getGrupById(grupId)
+    }
+
     Scaffold(
         bottomBar = {
-            BottomNavBar(navController = navController, Screen.Group.route)
+            BottomNavBar(navController = navController, Screen.ListGroup.route)
         },
         topBar = {
             TopAppBar(
@@ -65,7 +76,7 @@ fun MainScreenAnggota(navController: NavHostController) {
                     }
                 },
                 title = {
-                    Text(text = (stringResource(id = R.string.nama_grup1)))
+                    Text(text = grup?.namaGrup ?: "")
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = BackgroundBar,
@@ -73,9 +84,8 @@ fun MainScreenAnggota(navController: NavHostController) {
                 ),
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.Menu.route)
-                    }
-                    ) {
+                        navController.navigate(Screen.Menu.route + "/$grupId")
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Menu,
                             contentDescription = stringResource(R.string.menu_grup),
@@ -86,115 +96,34 @@ fun MainScreenAnggota(navController: NavHostController) {
             )
         },
         containerColor = Color.White
-    ) {
-        ScreenContent(modifier = Modifier.padding(it), navController)
+    ) { innerPadding ->
+        grup?.let { grupData ->
+            ScreenContent(modifier = Modifier.padding(innerPadding), navController, grupData)
+        }
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navController: NavHostController) {
+private fun ScreenContent(modifier: Modifier, navController: NavHostController, grup: Grup) {
     Column(
         modifier = modifier
             .padding(32.dp)
             .fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    text = stringResource(R.string.nominal),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                    )
-                Image(
-                    painter = painterResource(id = R.drawable.yellow_ellipse),
-                    contentDescription = "yellow_ellipse",
-                    modifier = Modifier.size(20.dp),
-                    alignment = Alignment.Center
-                    )
-
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 1.dp)
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.row_1),
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(R.string.row_2),
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+        // Bagian Tagihan
+        if (grup.tagihan.isNotEmpty()) {
+            TagihanBox(tagihan = grup.tagihan)
+        } else {
+            DefaultMessageBox(message = "Tagihan tidak tersedia")
         }
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.deskripsi),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 1.dp)
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.row_3),
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(R.string.row_4),
-                )
-            }
+        // Bagian Deskripsi
+        if (grup.deskripsi.isNotEmpty()) {
+            DeskripsiBox(deskripsi = grup.deskripsi)
+        } else {
+            DefaultMessageBox(message = "Deskripsi tidak tersedia")
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -206,7 +135,7 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedButton(
-                onClick = { navController.navigate("formUploadScreen") },
+                onClick = { navController.navigate(Screen.FormUpload.route) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 border = BorderStroke(color = Outline, width = 2.dp),
                 shape = RoundedCornerShape(20.dp),
@@ -232,10 +161,56 @@ private fun ScreenContent(modifier: Modifier, navController: NavHostController) 
     }
 }
 
+@Composable
+fun TagihanBox(tagihan: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                BorderStroke(width = 2.dp, color = Outline),
+                shape = RoundedCornerShape(20.dp)
+            )
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = tagihan,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
+fun DeskripsiBox(deskripsi: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                BorderStroke(width = 2.dp, color = Outline),
+                shape = RoundedCornerShape(20.dp)
+            )
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = deskripsi,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
+fun DefaultMessageBox(message: String) {
+    Text(
+        modifier = Modifier.padding(16.dp),
+        text = message,
+        style = MaterialTheme.typography.bodyLarge,
+        color = Color.Gray
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    FinansiapTheme {
-        MainScreenAnggota(rememberNavController())
-    }
+    val navController = rememberNavController()
+    val viewModel = GrupViewModel(GrupRepository())
+    MainScreenAnggota(navController, "sample_grup_id", viewModel)
 }

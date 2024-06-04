@@ -1,17 +1,8 @@
-
 package org.d3if0070.finansiap.screen.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
@@ -38,12 +29,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +40,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.navigation.Screen
-import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
 import org.d3if0070.finansiap.viewmodel.UserViewModel
 
@@ -71,12 +59,15 @@ fun LoginScreen(
     var passwordError by remember { mutableStateOf(false) }
 
     val loginSuccess by viewModel.loginSuccess.collectAsState()
+    val currentUser by viewModel.currentUser.collectAsState()
     val loginError by viewModel.loginError.collectAsState()
 
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
+        if (currentUser != null) {
             Toast.makeText(context, "Berhasil Masuk", Toast.LENGTH_SHORT).show()
             navController.navigate(Screen.Dashboard.route)
+        }
         }
     }
 
@@ -191,17 +182,11 @@ fun LoginScreen(
                 onClick = {
                     navController.navigate("registerScreen")
                 },
-                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    FinansiapTheme {
-        LoginScreen(rememberNavController(), viewModel())
     }
 }
