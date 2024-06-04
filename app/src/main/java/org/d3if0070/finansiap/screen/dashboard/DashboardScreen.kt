@@ -19,6 +19,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,33 +32,57 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
+import org.d3if0070.finansiap.firebase.GrupRepository
+import org.d3if0070.finansiap.model.Grup
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
-
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
 
 @Composable
-fun DashboardScreen(navController: NavHostController) {
+fun DashboardScreen(navController: NavHostController, viewModel: GrupViewModel, userEmail: String) {
+    val joinedGrupList by viewModel.joinedGrupList.collectAsState()
+    val createdGrupList by viewModel.createdGrupList.collectAsState()
+    val tagihanList by viewModel.tagihanList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchGrupData(userEmail)
+    }
+
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController, Screen.Dashboard.route)
         },
         containerColor = Color.White
     ) {
-        ScreenContent(modifier = Modifier.padding(it), navController)
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            navController = navController,
+            joinedGrupList = joinedGrupList,
+            createdGrupList = createdGrupList,
+            tagihanList = tagihanList
+        )
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navController : NavHostController) {
+private fun ScreenContent(
+    modifier: Modifier,
+    navController: NavHostController,
+    joinedGrupList: List<Grup>,
+    createdGrupList: List<Grup>,
+    tagihanList: List<String>
+) {
     Column(
         modifier = modifier
             .padding(32.dp)
             .fillMaxSize()
     ) {
+        // Section for upcoming bills
         Text(
             modifier = Modifier
                 .padding(top = 12.dp)
@@ -68,54 +95,32 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(0.9f),
-                    text = stringResource(R.string.nominal),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 1.dp)
-
+        if (tagihanList.isEmpty()) {
+            DefaultMessageBox(message = "Tidak ada tagihan mendatang")
+        } else {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
+                    .border(
+                        BorderStroke(width = 2.dp, color = Outline),
+                        shape = RoundedCornerShape(20.dp)
+                    )
             ) {
-                Text(
-                    text = stringResource(R.string.row_1),
-                    fontWeight = FontWeight.Bold,
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(R.string.row_2),
-                    fontWeight = FontWeight.Bold,
-                )
+                tagihanList.forEach { tagihan ->
+                    TagihanBox(tagihan = tagihan)
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .align(Alignment.CenterHorizontally),
+                        thickness = 1.dp
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
+        // Section for joined groups
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -125,65 +130,89 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-
         Spacer(modifier = Modifier.height(15.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            OutlinedButton(
-                onClick = {navController.navigate("mainScreen1")},
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                border = BorderStroke(color = Outline, width = 2.dp),
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .height(60.dp),
-            ) {
-                Text(
-                    modifier =  Modifier.fillMaxWidth(),
-                    text = "Grup 1",
-                    color = BackgroundBar,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            OutlinedButton(
-                onClick = {navController.navigate("mainScreen2")},
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                border = BorderStroke(color = Outline, width = 2.dp),
-                shape = RoundedCornerShape(10.dp),
+        if (joinedGrupList.isEmpty() && createdGrupList.isEmpty()) {
+            DefaultMessageBox(message = "Tidak ada grup yang terdaftar")
+        } else {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
+                    .border(
+                        BorderStroke(width = 2.dp, color = Outline),
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
-                Text(
-                    modifier =  Modifier.fillMaxWidth(),
-                    text = "Grup 1",
-                    color = BackgroundBar,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                joinedGrupList.forEach { grup ->
+                    GrupCard(grup = grup, navController = navController)
+                }
+                createdGrupList.forEach { grup ->
+                    GrupCard(grup = grup, navController = navController)
+                }
             }
         }
     }
 }
 
+@Composable
+fun TagihanBox(tagihan: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = tagihan,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
+fun GrupCard(grup: Grup, navController: NavHostController) {
+    OutlinedButton(
+        onClick = {
+            val route = if (grup.bendahara == FirebaseAuth.getInstance().currentUser?.email) {
+                Screen.MainScreenBendahara.createRoute(grup.gid)
+            } else {
+                Screen.MainScreenAnggota.createRoute(grup.gid)
+            }
+            navController.navigate(route)
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        border = BorderStroke(color = Outline, width = 2.dp),
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = grup.namaGrup,
+            color = BackgroundBar,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+    Spacer(modifier = Modifier.height(10.dp))
+}
+
+@Composable
+fun DefaultMessageBox(message: String) {
+    Text(
+        modifier = Modifier.padding(16.dp),
+        text = message,
+        style = MaterialTheme.typography.bodyLarge,
+        color = Color.Gray
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
 fun DashboardScreenPreview() {
-    FinansiapTheme {
-        DashboardScreen(rememberNavController())
-    }
+    val navController = rememberNavController()
+    val viewModel = GrupViewModel(GrupRepository())
+    DashboardScreen(navController, viewModel, "user@example.com")
 }

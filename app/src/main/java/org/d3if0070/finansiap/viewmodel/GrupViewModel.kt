@@ -10,6 +10,9 @@ import org.d3if0070.finansiap.firebase.GrupRepository
 import org.d3if0070.finansiap.model.Grup
 
 class GrupViewModel(val repository: GrupRepository) : ViewModel() {
+
+    private val _tagihanList = MutableStateFlow<List<String>>(emptyList())
+    val tagihanList: StateFlow<List<String>> = _tagihanList
     private val _currentGrup = MutableStateFlow<Grup?>(null)
     val currentGrup: StateFlow<Grup?> = _currentGrup
     private val _grupList = MutableStateFlow<List<Grup>>(emptyList())
@@ -95,6 +98,24 @@ class GrupViewModel(val repository: GrupRepository) : ViewModel() {
                 Log.e("GrupViewModel", "Error fetching joined grup items", e)
             }
         }
+    }
+
+    fun fetchGrupData(userEmail: String) {
+        viewModelScope.launch {
+            try {
+                _joinedGrupList.value = repository.getJoinedGrup(userEmail)
+                _createdGrupList.value = repository.getCreatedGrup(userEmail)
+                fetchTagihan()
+            } catch (e: Exception) {
+                Log.e("GrupViewModel", "Error fetching grup data", e)
+            }
+        }
+    }
+
+    private fun fetchTagihan() {
+        val allGrup = _joinedGrupList.value + _createdGrupList.value
+        val tagihan = allGrup.map { it.tagihan }.filter { it.isNotEmpty() }
+        _tagihanList.value = tagihan
     }
 
     fun fetchCreatedGrup(userId: String) {

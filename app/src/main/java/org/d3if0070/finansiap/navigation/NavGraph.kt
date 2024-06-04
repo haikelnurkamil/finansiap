@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import org.d3if0070.finansiap.firebase.GrupRepository
 import org.d3if0070.finansiap.screen.account.AccountScreen
 import org.d3if0070.finansiap.screen.dashboard.DashboardScreen
@@ -26,7 +27,7 @@ import org.d3if0070.finansiap.screen.group.CreateScreen
 import org.d3if0070.finansiap.screen.group.JoinScreen
 import org.d3if0070.finansiap.screen.group.ListGroupScreen
 import org.d3if0070.finansiap.screen.group.MenuScreen
-import org.d3if0070.finansiap.screen.group.anggota.FormUploadlScreen
+import org.d3if0070.finansiap.screen.group.anggota.FormUploadlScreen // <-- Make sure this matches the actual file and class name
 import org.d3if0070.finansiap.screen.group.anggota.MainScreenAnggota
 import org.d3if0070.finansiap.screen.group.anggota.SuccessUploadScreen
 import org.d3if0070.finansiap.screen.group.bendahara.ApprovalScreen
@@ -89,7 +90,10 @@ fun NavGraph() {
                 RegisterScreen(navController = navController, viewModel())
             }
             composable(route = Screen.Dashboard.route) {
-                DashboardScreen(navController = navController)
+                val factory = GrupViewModelFactory(GrupRepository())
+                val viewModel: GrupViewModel = viewModel(factory = factory)
+                val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: ""
+                DashboardScreen(navController = navController, viewModel = viewModel, userEmail = userEmail)
             }
             composable(route = Screen.Group.route) {
                 GroupScreen(navController = navController)
@@ -131,7 +135,7 @@ fun NavGraph() {
                 ApprovalScreen(navController = navController)
             }
             composable(route = Screen.FormUpload.route) {
-                FormUploadlScreen(navController = navController)
+                FormUploadlScreen(navController = navController) // <-- Make sure this matches the actual file and class name
             }
             composable(route = Screen.SuccessUpload.route) {
                 SuccessUploadScreen(navController = navController)
