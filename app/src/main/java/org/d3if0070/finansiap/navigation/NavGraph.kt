@@ -16,11 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.d3if0070.finansiap.firebase.GrupRepository
 import org.d3if0070.finansiap.screen.account.AccountScreen
 import org.d3if0070.finansiap.screen.dashboard.DashboardScreen
 import org.d3if0070.finansiap.screen.group.GroupScreen
 import org.d3if0070.finansiap.screen.auth.LoginScreen
-
 import org.d3if0070.finansiap.screen.auth.RegisterScreen
 import org.d3if0070.finansiap.screen.group.CreateScreen
 import org.d3if0070.finansiap.screen.group.JoinScreen
@@ -32,6 +32,8 @@ import org.d3if0070.finansiap.screen.group.anggota.SuccessUploadScreen
 import org.d3if0070.finansiap.screen.group.bendahara.ApprovalScreen
 import org.d3if0070.finansiap.screen.group.bendahara.DetailScreen
 import org.d3if0070.finansiap.screen.group.bendahara.MainScreenBendahara
+import org.d3if0070.finansiap.util.GrupViewModelFactory
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
 
 @Composable
 fun NavGraph() {
@@ -81,7 +83,7 @@ fun NavGraph() {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = Screen.Login.route) {
-                LoginScreen(navController = navController,viewModel())
+                LoginScreen(navController = navController, viewModel())
             }
             composable(route = Screen.Register.route) {
                 RegisterScreen(navController = navController, viewModel())
@@ -104,14 +106,23 @@ fun NavGraph() {
             composable(route = Screen.ListGroup.route) {
                 ListGroupScreen(navController = navController)
             }
-            composable(route = Screen.MainScreenAnggota.route) {
-                MainScreenAnggota(navController = navController)
+            composable(route = Screen.MainScreenAnggota.route) { backStackEntry ->
+                val grupId = backStackEntry.arguments?.getString("grupId") ?: return@composable
+                val factory = GrupViewModelFactory(GrupRepository())
+                val viewModel: GrupViewModel = viewModel(factory = factory)
+                MainScreenAnggota(navController = navController, grupId = grupId, viewModel = viewModel)
             }
-            composable(route = Screen.MainScreenBendahara.route) {
-                MainScreenBendahara(navController = navController)
+            composable(route = Screen.MainScreenBendahara.route) { backStackEntry ->
+                val grupId = backStackEntry.arguments?.getString("grupId") ?: return@composable
+                val factory = GrupViewModelFactory(GrupRepository())
+                val viewModel: GrupViewModel = viewModel(factory = factory)
+                MainScreenBendahara(navController = navController, grupId = grupId, viewModel = viewModel)
             }
-            composable(route = Screen.Menu.route) {
-                MenuScreen(navController = navController)
+            composable(route = Screen.Menu.route + "/{grupId}") { backStackEntry ->
+                val grupId = backStackEntry.arguments?.getString("grupId") ?: return@composable
+                val factory = GrupViewModelFactory(GrupRepository())
+                val viewModel: GrupViewModel = viewModel(factory = factory)
+                MenuScreen(navController = navController, grupId = grupId, viewModel = viewModel)
             }
             composable(route = Screen.DetailScreen.route) {
                 DetailScreen(navController = navController)

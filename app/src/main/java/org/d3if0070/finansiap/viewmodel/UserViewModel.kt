@@ -15,7 +15,10 @@ import kotlinx.coroutines.tasks.await
 import org.d3if0070.finansiap.firebase.UserRepository
 import org.d3if0070.finansiap.model.User
 import org.d3if0070.finansiap.navigation.Screen
+
+
 class UserViewModel : ViewModel() {
+
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
@@ -181,5 +184,4 @@ class UserViewModel : ViewModel() {
         firebaseAuth.addAuthStateListener(authStateListener)
     }
 }
-
 

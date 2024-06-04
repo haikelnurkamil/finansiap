@@ -23,14 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
 import org.d3if0070.finansiap.firebase.GrupRepository
@@ -50,12 +46,22 @@ import org.d3if0070.finansiap.ui.theme.Outline
 import org.d3if0070.finansiap.util.GrupViewModelFactory
 import org.d3if0070.finansiap.viewmodel.GrupViewModel
 
-
 @Composable
 fun ListGroupScreen(navController: NavHostController) {
     val repository = GrupRepository()
     val factory = GrupViewModelFactory(repository)
     val viewModel: GrupViewModel = viewModel(factory = factory)
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userEmail = currentUser?.email ?: "unknown"
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchJoinedGrup(userEmail)
+        viewModel.fetchCreatedGrup(userEmail)
+    }
+
+    val joinedGrupList by viewModel.joinedGrupList.collectAsState()
+    val createdGrupList by viewModel.createdGrupList.collectAsState()
+    val grupList = joinedGrupList + createdGrupList
 
     Scaffold(
         bottomBar = {
@@ -78,7 +84,7 @@ fun ListGroupScreen(navController: NavHostController) {
             }
         }
     ) {
-        ScreenContent( modifier = Modifier.padding(it), navController)
+        ScreenContent(modifier = Modifier.padding(it), navController, grupList, userEmail)
     }
 }
 
@@ -86,28 +92,9 @@ fun ListGroupScreen(navController: NavHostController) {
 private fun ScreenContent(
     modifier: Modifier,
     navController: NavHostController,
-    id: String? = null
+    grupList: List<Grup>,
+    userId: String
 ) {
-    val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
-    val repository = GrupRepository()
-    val factory = GrupViewModelFactory(repository)
-    val viewModel: GrupViewModel = viewModel(factory = factory)
-
-    val grupList by viewModel.gruplist.collectAsState()
-
-    var namaGrup by rememberSaveable { mutableStateOf("") }
-    var code by rememberSaveable { mutableStateOf("") }
-
-    LaunchedEffect(true) {
-        if (id == null) return@LaunchedEffect
-        val data = viewModel.getGrupById(id)
-        data?.let {
-            namaGrup = it.namaGrup
-            code = it.kodeGrup
-        }
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -116,16 +103,14 @@ private fun ScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.list_grup),
             style = MaterialTheme.typography.titleLarge,
             color = BackgroundBar,
             fontWeight = FontWeight.Bold
         )
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -140,14 +125,9 @@ private fun ScreenContent(
                     Text(text = stringResource(id = R.string.list_kosong))
                 }
             else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    items(grupList){grup ->
-                        GrupCard(
-                            grup = grup,
-                            navController
-                        )
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(grupList) { grup ->
+                        GrupCard(grup = grup, navController = navController, userId = userId)
                     }
                 }
             }
@@ -156,22 +136,27 @@ private fun ScreenContent(
 }
 
 @Composable
-fun GrupCard (
+fun GrupCard(
     grup: Grup,
-    navController: NavHostController
-){
+    navController: NavHostController,
+    userId: String
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
             .border(2.dp, Outline, RoundedCornerShape(10.dp))
-            .clickable { navController.navigate(Screen.MainScreenBendahara.route) },
+            .clickable {
+                if (grup.bendahara == userId) {
+                    navController.navigate(Screen.MainScreenBendahara.createRoute(grup.gid))
+                } else {
+                    navController.navigate(Screen.MainScreenAnggota.createRoute(grup.gid))
+                }
+            },
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 20.dp)
-                .fillMaxWidth(0.8f),
+            modifier = Modifier.padding(start = 20.dp).fillMaxWidth(0.8f),
             text = grup.namaGrup,
             color = BackgroundBar,
             fontSize = 16.sp,
@@ -180,8 +165,6 @@ fun GrupCard (
     }
     Spacer(modifier = Modifier.height(15.dp))
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

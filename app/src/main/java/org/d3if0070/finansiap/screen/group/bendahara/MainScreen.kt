@@ -3,6 +3,7 @@ package org.d3if0070.finansiap.screen.group.bendahara
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,15 +29,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,15 +53,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import org.d3if0070.finansiap.R
 import org.d3if0070.finansiap.component.BottomNavBar
+import org.d3if0070.finansiap.firebase.GrupRepository
+import org.d3if0070.finansiap.model.Grup
 import org.d3if0070.finansiap.navigation.Screen
 import org.d3if0070.finansiap.ui.theme.BackgroundBar
 import org.d3if0070.finansiap.ui.theme.FinansiapTheme
 import org.d3if0070.finansiap.ui.theme.Outline
-
+import org.d3if0070.finansiap.viewmodel.GrupViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreenBendahara(navController: NavHostController) {
+fun MainScreenBendahara(navController: NavHostController, grupId: String, viewModel: GrupViewModel) {
+    val grup by viewModel.currentGrup.collectAsState()
+
+    LaunchedEffect(grupId) {
+        viewModel.getGrupById(grupId)
+    }
+
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController, Screen.Group.route)
@@ -65,7 +86,7 @@ fun MainScreenBendahara(navController: NavHostController) {
                     }
                 },
                 title = {
-                    Text(text = (stringResource(id = R.string.nama_grup1)))
+                    Text(text = grup?.namaGrup ?: "")
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = BackgroundBar,
@@ -73,9 +94,8 @@ fun MainScreenBendahara(navController: NavHostController) {
                 ),
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.Menu.route)
-                    }
-                    ) {
+                        navController.navigate(Screen.Menu.route + "/$grupId")
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Menu,
                             contentDescription = stringResource(R.string.menu_grup),
@@ -86,122 +106,47 @@ fun MainScreenBendahara(navController: NavHostController) {
             )
         },
         containerColor = Color.White
-    ) {
-        ScreenContent(modifier = Modifier.padding(it), navController)
+    ) { innerPadding ->
+        grup?.let {
+            ScreenContent(modifier = Modifier.padding(innerPadding), navController, it, viewModel)
+        }
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navController : NavHostController) {
+private fun ScreenContent(
+    modifier: Modifier,
+    navController: NavHostController,
+    grup: Grup,
+    viewModel: GrupViewModel
+) {
     Column(
         modifier = modifier
             .padding(32.dp)
             .fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ){
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(0.85f),
-                        text = stringResource(R.string.nominal),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Edit",
-                    )
-                }
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .align(Alignment.CenterHorizontally),
-                    thickness = 1.dp
-                )
-
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.row_1),
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Text(
-                        text = stringResource(id = R.string.row_2),
-                    )
-                }
-        }
+        EditableTextBox(
+            label = "Tagihan",
+            value = grup.tagihan,
+            onSave = { newValue ->
+                viewModel.updateGrup(grup.copy(tagihan = newValue))
+            }
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    BorderStroke(width = 2.dp, color = Outline),
-                    shape = RoundedCornerShape(20.dp)
-                )
-        ){
-            Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(0.85f),
-                    text = stringResource(R.string.deskripsi),
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Edit",
-                )
+        EditableTextBox(
+            label = "Deskripsi",
+            value = grup.deskripsi,
+            onSave = { newValue ->
+                viewModel.updateGrup(grup.copy(deskripsi = newValue))
             }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth(0.9f)
-                    .align(Alignment.CenterHorizontally),
-                thickness = 1.dp
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.row_3),
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = stringResource(id = R.string.row_4),
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedButton(
-            onClick = {navController.navigate("detailScreen")},
+            onClick = { navController.navigate(Screen.DetailScreen.route) },
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             border = BorderStroke(color = Outline, width = 2.dp),
             shape = RoundedCornerShape(10.dp),
@@ -228,7 +173,7 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedButton(
-                onClick = {navController.navigate("formUploadScreen")},
+                onClick = { navController.navigate(Screen.FormUpload.route) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 border = BorderStroke(color = Outline, width = 2.dp),
                 shape = RoundedCornerShape(20.dp),
@@ -253,10 +198,61 @@ private fun ScreenContent(modifier: Modifier, navController : NavHostController)
     }
 }
 
+@Composable
+fun EditableTextBox(label: String, value: String, onSave: (String) -> Unit) {
+    var text by remember { mutableStateOf(value) }
+    var editing by remember { mutableStateOf(false) }
+
+    if (editing) {
+        Column {
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                label = { Text(label) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    onSave(text)
+                    editing = false
+                })
+            )
+            Row {
+                Button(onClick = {
+                    onSave(text)
+                    editing = false
+                }) {
+                    Text("Save")
+                }
+                Button(onClick = { editing = false }) {
+                    Text("Cancel")
+                }
+            }
+        }
+    } else {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(BorderStroke(width = 2.dp, color = Outline), shape = RoundedCornerShape(20.dp))
+                .padding(16.dp)
+                .clickable { editing = true },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "$label: $value",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit $label"
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    FinansiapTheme {
-        MainScreenBendahara(rememberNavController())
-    }
+    val viewModel = GrupViewModel(GrupRepository())
+    MainScreenBendahara(rememberNavController(), "sample_grup_id", viewModel)
 }
